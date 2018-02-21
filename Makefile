@@ -13,15 +13,19 @@ AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
 AVRDUDE_FLAGS += -V -F -C /etc/avrdude.conf
 
-HEADERS=lcd_lib.h\
+HEADERS=digio.h\
+		lcd_lib.h\
+		pins.h\
 		uart.h\
 
 INCLUDES=$(addprefix $(PREFIX)/include/, $(HEADERS))
 
-OBJS=lcd_lib.o\
+OBJS=digio.o\
+	 lcd_lib.o\
+     pins.o\
      uart.o\
 
-BINS=command_test.elf\
+BINS=initial_setup.elf\
 
 .phony:	clean all
 
