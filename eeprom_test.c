@@ -27,66 +27,66 @@ int main(void){
 	EEPROM_init();
 	uart = UART_init("uart_0",115200);
 	
-	setPrescaler(frequency);
-	setMinLight(minLight);
-	setMaxLight(maxLight);
-	setMinTemp(minTemp);
-	setMaxTemp(maxTemp);
-	setMaxPoll(maxPoll);
-	setR1(R1);
-	setC1(C1);
-	setC2(C2);
-	setC3(C3);
+	set_EEPROM_prescaler(frequency);
+	set_EEPROM_minLight(minLight);
+	set_EEPROM_maxLight(maxLight);
+	set_EEPROM_minTemp(minTemp);
+	set_EEPROM_maxTemp(maxTemp);
+	set_EEPROM_maxPoll(maxPoll);
+	set_EEPROM_r1(R1);
+	set_EEPROM_c1(C1);
+	set_EEPROM_c2(C2);
+	set_EEPROM_c3(C3);
 	
 	while(1){
 		char msg[16];
 		
-		int fClock = getPrescaler();
+		int fClock = get_EEPROM_prescaler();
 		sprintf(msg, "%d\n", fClock);
 		printString(msg);
 		delayMs(300);
 		
-		int minLightValue = getMinLight();
+		int minLightValue = get_EEPROM_minLight();
 		sprintf(msg, "%d\n", minLightValue);
 		printString(msg);
 		delayMs(300);
 		
-		int maxLightValue = getMaxLight();
+		int maxLightValue = get_EEPROM_maxLight();
 		sprintf(msg, "%d\n", maxLightValue);
 		printString(msg);
 		delayMs(300);
 		
-		int minTempValue = getMinTemp();
+		int minTempValue = get_EEPROM_minTemp();
 		sprintf(msg, "%d\n", minTempValue);
 		printString(msg);
 		delayMs(300);
 		
-		int maxTempValue = getMaxTemp();
+		int maxTempValue = get_EEPROM_maxTemp();
 		sprintf(msg, "%d\n", maxTempValue);
 		printString(msg);
 		delayMs(300);
 		
-		int maxPollValue = getMaxPoll();
+		int maxPollValue = get_EEPROM_maxPoll();
 		sprintf(msg, "%d\n", maxPollValue);
 		printString(msg);
 		delayMs(300);
 		
-		int r1Value = getR1();
+		int r1Value = get_EEPROM_r1();
 		sprintf(msg, "%d\n", r1Value);
 		printString(msg);
 		delayMs(300);
 		
-		float c1Value = getC1();
+		float c1Value = get_EEPROM_c1();
 		sprintf(msg, "%f\n", c1Value);
 		printString(msg);
 		delayMs(300);
 		
-		float c2Value = getC2();
+		float c2Value = get_EEPROM_c2();
 		sprintf(msg, "%f\n", c2Value);
 		printString(msg);
 		delayMs(300);
 		
-		float c3Value = getC3();
+		float c3Value = get_EEPROM_c3();
 		sprintf(msg, "%f\n", c3Value);
 		printString(msg);
 		delayMs(300);

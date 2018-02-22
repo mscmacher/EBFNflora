@@ -2,25 +2,25 @@
 #include <stdint.h>
 
 /* GET functions */
-uint8_t getPrescaler(void);
-uint16_t getMinLight(void);
-uint16_t getMaxLight(void);
-uint16_t getMinTemp(void);
-uint16_t getMaxTemp(void);
-uint16_t getMaxPoll(void);
-uint32_t getR1(void);
-float getC1(void);
-float getC2(void);
-float getC3(void);
+uint8_t get_EEPROM_prescaler(void);
+uint16_t get_EEPROM_minLight(void);
+uint16_t get_EEPROM_maxLight(void);
+uint16_t get_EEPROM_minTemp(void);
+uint16_t get_EEPROM_maxTemp(void);
+uint16_t get_EEPROM_maxPoll(void);
+uint32_t get_EEPROM_r1(void);
+float get_EEPROM_c1(void);
+float get_EEPROM_c2(void);
+float get_EEPROM_c3(void);
 
 /* SET functions */
-void setPrescaler(char* str);
-void setMinLight(char* str);
-void setMaxLight(char* str);
-void setMinTemp(char* str);
-void setMaxTemp(char* str);
-void setMaxPoll(char* str);
-void setR1(char* str);
-void setC1(char* str);
-void setC2(char* str);
-void setC3(char* str);
+void set_EEPROM_prescaler(char* str);
+void set_EEPROM_minLight(char* str);
+void set_EEPROM_maxLight(char* str);
+void set_EEPROM_minTemp(char* str);
+void set_EEPROM_maxTemp(char* str);
+void set_EEPROM_maxPoll(char* str);
+void set_EEPROM_r1(char* str);
+void set_EEPROM_c1(char* str);
+void set_EEPROM_c2(char* str);
+void set_EEPROM_c3(char* str);

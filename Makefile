@@ -13,7 +13,8 @@ AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
 AVRDUDE_FLAGS += -V -F -C /etc/avrdude.conf
 
-HEADERS=delay.h\
+HEADERS=adc.h\
+	delay.h\
 	digio.h\
 	eeprom.h\
 	eepromParams.h\
@@ -23,7 +24,8 @@ HEADERS=delay.h\
 
 INCLUDES=$(addprefix $(PREFIX)/include/, $(HEADERS))
 
-OBJS=delay.o\
+OBJS=adc.o\
+     delay.o\
      digio.o\
      eeprom.o\
      eepromParams.o\
@@ -32,6 +34,7 @@ OBJS=delay.o\
      uart.o\
 
 BINS=initial_setup.elf\
+     eeprom_test.elf\
 
 .phony:	clean all
 
