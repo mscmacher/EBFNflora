@@ -16,6 +16,7 @@ AVRDUDE_FLAGS += -V -F -C /etc/avrdude.conf
 HEADERS=delay.h\
 	digio.h\
 	eeprom.h\
+	eepromParams.h\
 	lcd_lib.h\
 	pins.h\
 	uart.h\
@@ -25,6 +26,7 @@ INCLUDES=$(addprefix $(PREFIX)/include/, $(HEADERS))
 OBJS=delay.o\
      digio.o\
      eeprom.o\
+     eepromParams.o\
      lcd_lib.o\
      pins.o\
      uart.o\
