@@ -1,4 +1,4 @@
-#EBFNflora
+# EBFNflora
 
 All'avvio vengono inizializzati i registri per la comunicazione seriale (UART), l'uso dei timer (TIMER1), i pin digitali, l'LCD (usata [libreria esterna](http://winavr.scienceprog.com/example-avr-projects/avr-gcc-4-bit-and-8-bit-lcd-library.html)), l'interfaccia ADC (scritta appositamente in [adc.c](src/adc.c)) e gli external interrupt (INT0, INT1). Dopo aver attivato gli interrupt globali
 
@@ -10,7 +10,7 @@ sei(); //enable interrupts globally
 
 si entra in un loop in cui si richiede ripetutamente all'utente se intende configurare i parametri di misurazione in EEPROM:
 
-```
+```c
 while(waitingForOutput){
 	LCDclr();
 	printOnLCD("Setup sensors?");
@@ -22,7 +22,7 @@ while(waitingForOutput){
 
 Se viene premuto il bottone collegato al pin 2 (INT0) la variabile globale reset è settata a 1, altrimenti se viene premuto quello relativo al pin 3 (INT1), reset è settato a 0. In entrambi i casi waitingForOutput è settato a 0 causando così l'uscita dal ciclo.
 
-```
+```c
 ISR(INT0_vect){ //external interrupt service routine
 	if(waitingForOutput && DigIO_getValue(buttonLeft) == HIGH){
 		reset = 1;
@@ -44,7 +44,7 @@ Nel primo caso (reset = 1) l'MCU interagisce con l'utente per ottenere i nuovi p
 
 Nel secondo caso (reset = 0) i valori già presenti in EEPROM - quelli dell'ultima inizializzazione - sono salvati subito in variabili globali.
 
-```
+```c
 timer = get_EEPROM_timer();
 minLight = get_EEPROM_minLight();
 maxLight = get_EEPROM_maxLight();
@@ -62,7 +62,7 @@ Timer_start(timerSensors);
 
 Il valore in timer è usato per chiamare ogni timer millisecondi la funzione timerFn che si occupa di effettuare il sensing dell'ambiente.
 
-```
+```c
 void timerFn(void* args){
 	LCDclr();
 	if(i==0){
