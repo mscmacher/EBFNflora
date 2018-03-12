@@ -1,6 +1,6 @@
 PREFIX=.
 CC=avr-gcc
-CC_OPTS=-Wall --std=gnu99 -DF_CPU=16000000UL  -O3 -funsigned-char -funsigned-bitfields  -fshort-enums -Wall -Wstrict-prototypes -mmcu=atmega328 -Wl,-u,vfprintf -lprintf_flt -lm -I$(PREFIX)/include
+CC_OPTS=-Wall --std=gnu99 -DF_CPU=16000000UL  -O3 -funsigned-char -funsigned-bitfields  -fshort-enums -Wall -Wstrict-prototypes -mmcu=atmega328 -I$(PREFIX)/../include
 
 AVRDUDE=avrdude
 
@@ -13,35 +13,30 @@ AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
 AVRDUDE_FLAGS += -V -F -C /etc/avrdude.conf
 
-HEADERS=adc.h\
-	delay.h\
-	digio.h\
-	eeprom.h\
-	eepromParams.h\
-	lcd_lib.h\
-	pins.h\
+HEADERS=delay.h\
+	deferred_packet_handler.h\
+	packet_handler.h\
+	packet_header.h\
+	packet_operations.h\
 	uart.h\
 
-INCLUDES=$(addprefix $(PREFIX)/include/, $(HEADERS))
+INCLUDES=$(addprefix $(PREFIX)/../include/, $(HEADERS))
 
-OBJS=adc.o\
-     delay.o\
-     digio.o\
-     eeprom.o\
-     eepromParams.o\
-     lcd_lib.o\
-     pins.o\
-     uart.o\
+OBJS=delay.o\
+	deferred_packet_handler.o\
+	packet_handler.o\
+    uart.o\
 
-BINS=initial_setup.elf\
-     eeprom_test.elf\
-
+BINS=packet_echo_test.elf\
+	 packet_query_response_test.elf\
+	 packet_send_test.elf\
+	 
 .phony:	clean all
 
 all:	$(BINS)
 
 #common objects
-%.o:	$(PREFIX)/src/%.c $(INCLUDES)
+%.o:	$(PREFIX)/../src/%.c $(INCLUDES)
 	$(CC) $(CC_OPTS) -c  $<
 
 %.o:	$(PREFIX)/%.c $(INCLUDES)
