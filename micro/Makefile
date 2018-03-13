@@ -14,7 +14,7 @@ AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
 AVRDUDE_FLAGS += -V -F -C /etc/avrdude.conf
 
 HEADERS=delay.h\
-	deferred_packet_handler.h\
+	lcd_lib.h\
 	packet_handler.h\
 	packet_header.h\
 	packet_operations.h\
@@ -23,13 +23,11 @@ HEADERS=delay.h\
 INCLUDES=$(addprefix $(PREFIX)/../include/, $(HEADERS))
 
 OBJS=delay.o\
-	deferred_packet_handler.o\
+	lcd_lib.o\
 	packet_handler.o\
     uart.o\
 
-BINS=packet_echo_test.elf\
-	 packet_query_response_test.elf\
-	 packet_send_test.elf\
+BINS=packet_query_response_test.elf\
 	 
 .phony:	clean all
 
