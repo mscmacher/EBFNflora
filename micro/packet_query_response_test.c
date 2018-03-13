@@ -1,60 +1,47 @@
 #include "delay.h"
-#include <lcd_lib.h>
+#include "lcd_lib.h"
 #include "packet_handler.h"
 #include "uart.h"
 #include <string.h>
-
-#define BUF_SIZE 16
-char buffer[BUF_SIZE];
-volatile int size = 0; 
-
-volatile int responseCompleted = 0;
-
-#pragma pack(push, 1)
-typedef struct Packet0{
-	PacketHeader header;
-	short val;
-} Packet0;
-#pragma pack(pop)
-
-#define PACKET0_TYPE 0
-#define PACKET0_SIZE (sizeof(Packet0))
+#include <stdint.h>
+#include <stdio.h>
 
 PacketHandler packet_handler;
 
-Packet0 packet0_buffer;
+#pragma pack(push, 1)
+typedef struct TimerConfigPacket{
+	PacketHeader header;
+	uint32_t duration;
+} TimerConfigPacket;
+#pragma pack(pop)
 
-PacketHeader* Packet0_initializeBuffer(PacketType type, PacketSize size, void* args __attribute__((unused))) {
-	if (type != PACKET0_TYPE || size != PACKET0_SIZE)
+#define TIMER_CONFIG_PACKET_TYPE 0
+#define TIMER_CONFIG_PACKET_SIZE (sizeof(TimerConfigPacket))
+
+TimerConfigPacket timer_config_packet_buffer;
+
+PacketHeader* TimerConfigPacket_initializeBuffer(PacketType type, PacketSize size, void* args __attribute__((unused))) {
+	if (type != TIMER_CONFIG_PACKET_TYPE || size != TIMER_CONFIG_PACKET_SIZE)
 		return 0;
-	return (PacketHeader*) &packet0_buffer;
+	return (PacketHeader*) &timer_config_packet_buffer;
 }
 
-PacketStatus Packet0_print(PacketHeader* header){
-	Packet0* p =(Packet0 *) header;
-	uint8_t c = (char) p->val;
-	if (c==0 || size==BUF_SIZE-1){ // end of msg OR end of buffer: in both case print stored message
-		LCDclr();
-		LCDstring((uint8_t*)buffer, strlen(buffer));
-		size = 0;
-		responseCompleted = 1; // let's request next EEPROM param
-		return Success;
-	}
-	buffer[size++] = c;
-	buffer[size] = 0;
+PacketStatus TimerConfigPacket_onReceive(PacketHeader* header, void* args __attribute__((unused))){
+	TimerConfigPacket* p = (TimerConfigPacket*) header;
+	int duration = p->duration;
+	char buffer[8];
+	sprintf(buffer, "%d", duration);
+	LCDclr();
+	LCDstring((uint8_t*)buffer, strlen(buffer));
 	return Success;
-};
-
-PacketStatus Packet0_onReceive(PacketHeader* header, void* args __attribute__((unused))){
-	return Packet0_print(header);
 }
 
-PacketOperations packet0_ops = {
+PacketOperations TimerConfigPacket_ops = {
 	0,
-	sizeof(Packet0),
-	Packet0_initializeBuffer,
+	sizeof(TimerConfigPacket),
+	TimerConfigPacket_initializeBuffer,
 	0,
-	Packet0_onReceive,
+	TimerConfigPacket_onReceive,
 	0
 };
 
@@ -67,30 +54,6 @@ void flushInputBuffers(void){
 	}
 }
 
-int flushOutputBuffers(void){
-	while (packet_handler.tx_size)
-		UART_putChar(uart, PacketHandler_txByte(&packet_handler));
-	return packet_handler.tx_size;
-}
-
-void sendRequest(char* msg){
-	int seq=0;
-	int l = strlen(msg);
-	//sending all chars of msg one by one
-	for (int i=0; i<l; i++){
-		Packet0 p0 = { {PACKET0_TYPE, PACKET0_SIZE, 0}, (short)msg[i] };
-		p0.header.seq=seq;
-		seq++;
-		PacketHandler_sendPacket(&packet_handler, (PacketHeader*) &p0);
-		delayMs(10);
-	}
-	//sending 0 as terminator character at the end of msg
-	Packet0 p0 = { {PACKET0_TYPE, PACKET0_SIZE, 0}, 0 };
-	p0.header.seq = seq;
-	seq++;
-	PacketHandler_sendPacket(&packet_handler, (PacketHeader*) &p0);
-	delayMs(10);
-}
 
 int main(int argc, char** argv){
 	uart = UART_init(0, 115200);
@@ -99,56 +62,10 @@ int main(int argc, char** argv){
 	LCDclr();
 	LCDcursorOFF();
 	
-	buffer[0] = 0;
-	
 	PacketHandler_initialize(&packet_handler);
-	PacketHandler_installPacket(&packet_handler, &packet0_ops);	
-	
-	delayMs(2000);
+	PacketHandler_installPacket(&packet_handler, &TimerConfigPacket_ops);
 
 	while (1){
-		sendRequest("timer in ms?");
-		flushOutputBuffers();
-		while (!responseCompleted)
-			flushInputBuffers();
-		
-		responseCompleted = 0;
-		sendRequest("min light?");
-		flushOutputBuffers();
-		while (!responseCompleted)
-			flushInputBuffers();
-		
-		responseCompleted = 0;
-		sendRequest("max light?");
-		flushOutputBuffers();
-		while (!responseCompleted)
-			flushInputBuffers();
-		
-		responseCompleted = 0;
-		sendRequest("min temperature?");
-		flushOutputBuffers();
-		while (!responseCompleted)
-			flushInputBuffers();
-		
-		responseCompleted = 0;
-		sendRequest("max temperature?");
-		flushOutputBuffers();
-		while (!responseCompleted)
-			flushInputBuffers();
-		
-		responseCompleted = 0;
-		sendRequest("max pollution?");
-		flushOutputBuffers();
-		while (!responseCompleted)
-			flushInputBuffers();
-		
-		responseCompleted = 0;
-		sendRequest("thermistor resistance?");
-		flushOutputBuffers();
-		while (!responseCompleted)
-			flushInputBuffers();
-
-		delayMs(100);
-		break;
+		flushInputBuffers();
 	}
 }
